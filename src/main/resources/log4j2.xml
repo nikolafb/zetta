@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN" monitorInterval="30">
+    <Properties>
+        <Property name="MIN_LEVEL_FILE">FATAL</Property>
+        <Property name="MAX_LEVEL_FILE">INFO</Property>
+        <Property name="LOG_PATH">logs</Property>
+        <Property name="FILE_NAME">be_${date:yyyy-MM-dd_HH-mm-ss}</Property>
+        <Property name="LOG_PATTERN">%clr{%d{yyyy-MM-dd HH:mm:ss.SSS}}{faint} %clr{,}{faint} %clr{%5p} %clr{,}{faint} %clr{[%15.15t]}{faint} %clr{,}{faint} %clr{%-40.40c{1.}}{cyan} %clr{,}{faint} %msg%n%throwable
+        </Property>
+    </Properties>
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT" follow="true">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+        </Console>
+        <File name="File" fileName="${LOG_PATH}/${FILE_NAME}.log" append="false">
+            <LevelRangeFilter minLevel="${MIN_LEVEL_FILE}"  maxLevel="${MAX_LEVEL_FILE}" onMatch="ACCEPT" onMismatch="DENY"/>
+            <PatternLayout>
+                <Pattern>${LOG_PATTERN}</Pattern>
+            </PatternLayout>
+        </File>
+    </Appenders>
+    <Loggers>
+        <Root level="info">
+            <AppenderRef ref="File"/>
+            <AppenderRef ref="Console"/>
+        </Root>
+    </Loggers>
+</Configuration>
