@@ -23,7 +23,7 @@ public class CurrencyController {
 
     @Operation(summary = "Get exchange rate between two currencies by source and target currency."
             , description = "Get exchange rate between two currencies by source and target currency. " +
-            "The exchange rate is based on the latest data from the exchange rate API.")
+            "The exchange rate is based on the latest data from the exchange rate API." )
     @GetMapping("/exchange-rate")
     public ExchangeRateDto getExchangeRate(@RequestHeader(name = "Accept-Language", defaultValue = "en") String acceptLanguage,
                                            @RequestParam String sourceCurrency, @RequestParam String targetCurrency) {
