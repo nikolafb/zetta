@@ -2,9 +2,14 @@ package zetta.service.impl;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import zetta.domain.dto.ConversionHistoryDto;
 import zetta.domain.dto.client.ExchangeRateResponseDto;
+import zetta.domain.dto.criteria.ConversionHistoryCriteriaDto;
 import zetta.domain.dto.request.CurrencyCovertRequestDto;
 import zetta.domain.dto.response.CurrencyCovertResponseDto;
 import zetta.domain.entity.CurrencyConversion;
@@ -15,6 +20,7 @@ import zetta.repository.CurrencyConversionRepository;
 import zetta.service.CurrencyService;
 import zetta.util.locale.LocaleUtil;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -63,11 +69,24 @@ public class CurrencyServiceImpl implements CurrencyService {
         return currencyMapper.mapCurrencyConversionToCurrencyCovertResponseDto(currencyConversion);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public Page<ConversionHistoryDto> retrieveConversionHistory(ConversionHistoryCriteriaDto conversionHistoryCriteriaDto, Pageable pageable) {
+        Page<CurrencyConversion> currencyConversions = currencyConversionRepository.findCurrencyConversion(conversionHistoryCriteriaDto, pageable);
+
+        List<ConversionHistoryDto> conversions = currencyConversions.getContent().stream()
+                .map(currencyMapper::mapConversionHistoryToConversionHistoryDto)
+                .toList();
+
+        return new PageImpl<>(conversions, pageable, currencyConversions.getTotalElements());
+    }
+
     private Double convertAmount(final Double amount, final Double rateValue) {
         Double convertedAmount = amount * rateValue;
 
         // Validate if the convertedAmount is not more than it can be stored in the database and in memory
         if (convertedAmount > Double.MAX_VALUE || Double.isInfinite(convertedAmount) || convertedAmount.isNaN()) {
+            log.fatal("Converted amount is too large to be stored in the database");
             throw new IllegalArgumentException(LocaleUtil.getLocaleMassage("exchange.amount.covert"));
         }
 

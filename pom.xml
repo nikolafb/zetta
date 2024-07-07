@@ -26,6 +26,7 @@
 		<javax.servlet-api.version>4.0.1</javax.servlet-api.version>
 		<springdoc-openapi-starter-webmvc-ui.version>2.3.0</springdoc-openapi-starter-webmvc-ui.version>
 		<mapstruct.version>1.5.5.Final</mapstruct.version>
+		<jpamodelgen.version>6.4.4.Final</jpamodelgen.version>
 	</properties>
 	
 	<dependencies>	
@@ -130,6 +131,22 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<annotationProcessorPaths>
+						<path>
+							<groupId>org.hibernate.orm</groupId>
+							<artifactId>hibernate-jpamodelgen</artifactId>
+							<version>${jpamodelgen.version}</version>
+						</path>
+					</annotationProcessorPaths>
+					<compilerArgs>
+						<arg>-parameters</arg>
+					</compilerArgs>
+				</configuration>
 			</plugin>
 
 		</plugins>
