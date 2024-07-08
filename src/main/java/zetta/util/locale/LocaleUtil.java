@@ -14,6 +14,10 @@ public class LocaleUtil {
         LocaleUtil.messageSource = messageSource;
     }
 
+    public static void setMessageSource(ResourceBundleMessageSource source) {
+        messageSource = source;
+    }
+
     public static String getLocaleMassage(String msg) {
         Locale locale = LocaleContextHolder.getLocale();
         return messageSource.getMessage(msg, null, locale);

@@ -1,5 +1,6 @@
 package zetta.httpclient.impl;
 
+import org.apache.coyote.BadRequestException;
 import org.apache.logging.log4j.LogManager;
 
 import org.apache.logging.log4j.Logger;
@@ -11,6 +12,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import zetta.config.properties.Properties;
 import zetta.domain.dto.client.ExchangeRateResponseDto;
 import zetta.exception.EntityNotFoundException;
+import zetta.exception.TechnicalException;
 import zetta.httpclient.HttpClientExchangeRateService;
 import zetta.util.locale.LocaleUtil;
 
@@ -45,15 +47,17 @@ public class HttpClientExchangeRateServiceImpl implements HttpClientExchangeRate
                 throw new EntityNotFoundException(LocaleUtil.getLocaleMassage("exchange.source.not.found"));
             } else if (e.getStatusCode() == HttpStatus.BAD_REQUEST) {
                 log.error("Bad request: {}", sourceCurrency);
+                throw new TechnicalException(LocaleUtil.getLocaleMassage("exchange.bad.request"));
             } else if (e.getStatusCode() == HttpStatus.INTERNAL_SERVER_ERROR) {
                 log.error("Server error: " + e.getMessage());
+                throw new TechnicalException(LocaleUtil.getLocaleMassage("exchange.server.error"));
             } else {
                 log.error("Error while calling exchange rate API: {}", e.getMessage());
             }
             return null;
         }catch (Exception e){
             log.error("Error fetching exchange rate API: {}", e.getMessage());
-            return null;
+            throw new TechnicalException(LocaleUtil.getLocaleMassage("exchange.server.error.something.went.wrong"));
         }
 
 

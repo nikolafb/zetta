@@ -24,11 +24,6 @@ public class CurrencyController {
         this.currencyService = currencyService;
     }
 
-    @GetMapping("/test/{test}")
-    public String getContactTest(@PathVariable("test") String test) {
-        return LocaleUtil.getLocaleMassage(test);
-    }
-
     @Operation(summary = "Get exchange rate between two currencies by source and target currency."
             , description = "Get exchange rate between two currencies by source and target currency. " +
             "The exchange rate is based on the latest data from the exchange rate API." )

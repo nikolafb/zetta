@@ -1,6 +1,7 @@
 package zetta.exception;
 
 
+import org.apache.coyote.BadRequestException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -30,7 +31,6 @@ public class RestControllerExceptionHandler {
         return new ResponseEntity<>(exceptionResponseDTO, HttpStatus.NOT_FOUND);
     }
 
-    //jakarta validation exception
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseBody
     public ResponseEntity<ExceptionResponseDto> resolveException(
@@ -47,4 +47,17 @@ public class RestControllerExceptionHandler {
 
         return new ResponseEntity<>(exceptionResponseDTO, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(TechnicalException.class)
+    @ResponseBody
+    public ResponseEntity<ExceptionResponseDto> resolveException(TechnicalException exception) {
+        List<String> messages = new ArrayList<>(1);
+        messages.add(exception.getMessage());
+
+        ExceptionResponseDto exceptionResponseDTO = new ExceptionResponseDto(
+                HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), HttpStatus.INTERNAL_SERVER_ERROR.value(), messages);
+
+        return new ResponseEntity<>(exceptionResponseDTO, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
 }
