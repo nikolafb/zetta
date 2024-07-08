@@ -14,6 +14,7 @@ import zetta.domain.dto.request.CurrencyCovertRequestDto;
 import zetta.domain.dto.response.CurrencyCovertResponseDto;
 import zetta.domain.entity.CurrencyConversion;
 import zetta.domain.mapper.CurrencyMapper;
+import zetta.exception.EntityNotFoundException;
 import zetta.httpclient.HttpClientExchangeRateService;
 import zetta.httpclient.impl.HttpClientExchangeRateServiceImpl;
 import zetta.repository.CurrencyConversionRepository;
@@ -27,7 +28,7 @@ import java.util.UUID;
 @Service
 public class CurrencyServiceImpl implements CurrencyService {
 
-    private final Logger log = LogManager.getLogger(HttpClientExchangeRateServiceImpl.class);
+    private final Logger log = LogManager.getLogger(CurrencyServiceImpl.class);
 
     private final HttpClientExchangeRateService httpClientExchangeRateService;
 
@@ -48,7 +49,13 @@ public class CurrencyServiceImpl implements CurrencyService {
     public Double getExchangeRate(String sourceCurrency, String targetCurrency) {
         ExchangeRateResponseDto exchangeRateDto = exchangeRateClient(sourceCurrency);
 
-        return exchangeRateDto.getConversionRates().get(targetCurrency.toUpperCase());
+        Double rateValue = exchangeRateDto.getConversionRates().get(targetCurrency.toUpperCase());
+        if (!Objects.nonNull(rateValue)) {
+            log.error("Target currency not found: {}", targetCurrency);
+            throw new EntityNotFoundException(LocaleUtil.getLocaleMassage("exchange.target.not.found"));
+        }
+
+        return rateValue;
     }
 
     @Override
