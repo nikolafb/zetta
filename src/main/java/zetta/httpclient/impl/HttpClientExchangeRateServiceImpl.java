@@ -1,6 +1,5 @@
 package zetta.httpclient.impl;
 
-import org.apache.coyote.BadRequestException;
 import org.apache.logging.log4j.LogManager;
 
 import org.apache.logging.log4j.Logger;
@@ -11,8 +10,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 import zetta.config.properties.Properties;
 import zetta.domain.dto.client.ExchangeRateResponseDto;
-import zetta.exception.EntityNotFoundException;
-import zetta.exception.TechnicalException;
+import zetta.exception.BusinessExceptionFactory;
 import zetta.httpclient.HttpClientExchangeRateService;
 import zetta.util.locale.LocaleUtil;
 
@@ -44,20 +42,20 @@ public class HttpClientExchangeRateServiceImpl implements HttpClientExchangeRate
             // will handle only client errors
             if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
                 log.error("Source currency not found: {}", sourceCurrency);
-                throw new EntityNotFoundException(LocaleUtil.getLocaleMassage("exchange.source.not.found"));
+                throw BusinessExceptionFactory.entityNotFoundException("Not Found", LocaleUtil.getLocaleMassage("exchange.source.not.found"));
             } else if (e.getStatusCode() == HttpStatus.BAD_REQUEST) {
                 log.error("Bad request: {}", sourceCurrency);
-                throw new TechnicalException(LocaleUtil.getLocaleMassage("exchange.bad.request"));
+                throw BusinessExceptionFactory.badRequestException("Bad Request", LocaleUtil.getLocaleMassage("exchange.bad.request"));
             } else if (e.getStatusCode() == HttpStatus.INTERNAL_SERVER_ERROR) {
                 log.error("Server error: " + e.getMessage());
-                throw new TechnicalException(LocaleUtil.getLocaleMassage("exchange.server.error"));
+                throw BusinessExceptionFactory.internalException("Internal Error", LocaleUtil.getLocaleMassage("exchange.server.error"));
             } else {
                 log.error("Error while calling exchange rate API: {}", e.getMessage());
             }
             return null;
         }catch (Exception e){
             log.error("Error fetching exchange rate API: {}", e.getMessage());
-            throw new TechnicalException(LocaleUtil.getLocaleMassage("exchange.server.error.something.went.wrong"));
+            throw BusinessExceptionFactory.internalException("Error", LocaleUtil.getLocaleMassage("exchange.server.error.something.went.wrong"));
         }
 
 
