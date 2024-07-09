@@ -3,12 +3,10 @@ package zetta.service.impl;
 
 
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
-import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -21,9 +19,8 @@ import zetta.domain.dto.request.CurrencyCovertRequestDto;
 import zetta.domain.dto.response.CurrencyCovertResponseDto;
 import zetta.domain.entity.CurrencyConversion;
 import zetta.domain.mapper.CurrencyMapper;
-import zetta.exception.EntityNotFoundException;
+import zetta.exception.BusinessException;
 import zetta.httpclient.HttpClientExchangeRateService;
-import zetta.httpclient.impl.HttpClientExchangeRateServiceImpl;
 import zetta.repository.CurrencyConversionRepository;
 import zetta.util.locale.LocaleUtil;
 
@@ -32,7 +29,6 @@ import static org.mockito.ArgumentMatchers.any;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
@@ -104,7 +100,7 @@ class CurrencyServiceImplTest {
 
         when(httpClientExchangeRateService.getExchangeRates(sourceCurrency)).thenReturn(exchangeRateResponseDto);
 
-        assertThrows(EntityNotFoundException.class, () -> currencyService.getExchangeRate(sourceCurrency, targetCurrency));
+        assertThrows(BusinessException.class, () -> currencyService.getExchangeRate(sourceCurrency, targetCurrency));
     }
 
 

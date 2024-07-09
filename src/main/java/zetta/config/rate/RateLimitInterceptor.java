@@ -13,7 +13,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Component
 public class RateLimitInterceptor implements HandlerInterceptor {
 
-    private static final int MAX_REQUESTS_PER_SECOND = 2;
+    private static final int MAX_REQUESTS_PER_SECOND = 10;
     private Map<String, Map<Long, AtomicInteger>> clientRequestCounts = new ConcurrentHashMap<>();
 
 
