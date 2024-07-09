@@ -2,6 +2,7 @@ package zetta.service.impl;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -45,6 +46,7 @@ public class CurrencyServiceImpl implements CurrencyService {
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(value = "exchangeRates", key = "#sourceCurrency + '-' + #targetCurrency")
     public Double getExchangeRate(String sourceCurrency, String targetCurrency) {
         ExchangeRateResponseDto exchangeRateDto = exchangeRateClient(sourceCurrency);
 
